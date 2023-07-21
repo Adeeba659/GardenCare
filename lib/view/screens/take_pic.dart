@@ -8,9 +8,10 @@ import '../widgets/bottomNavBar.dart';
 import '../../controllers/capture_image_controller.dart';
 import '../../controllers/identification_controller.dart';
 import '../../models/plant.dart';
-
-import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:get/get.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'no_plant_found.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 class TakePic extends StatefulWidget {
   @override
@@ -33,146 +34,123 @@ class _TakePicState extends State<TakePic> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ModalProgressHUD(
-        inAsyncCall: _isLoading,
-        color: secondaryColor,
-        progressIndicator: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(
-              primaryColor), // Customize the color of the loading circle
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: SizedBox.shrink(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ImageIcon(
-                            AssetImage("assets/images/choose.png"),
-                            size: 50,
-                            color: primaryColor,
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            'Choose an option',
-                            style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: fontName,
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: SizedBox.shrink(),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ImageIcon(
+                              AssetImage("assets/images/choose.png"),
+                              size: 50,
                               color: primaryColor,
                             ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: 400,
-                        padding: EdgeInsets.all(20),
-                        // child: imageFile != null
-                        //     ? Image.memory(
-                        //         imageFile!,
-                        //         fit: BoxFit.cover,
-                        //       )
-                        //     :
-                        child: Image.asset(
-                          "assets/images/taking_pic.png",
-                          fit: BoxFit.cover,
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              'Choose an option'.tr,
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: fontName,
+                                color: primaryColor,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      SizedBox(
-                        height: 60,
-                        width: 300,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            minimumSize: const Size(100, 40),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                        Container(
+                          height: 400,
+                          padding: EdgeInsets.all(20),
+                          child: Image.asset(
+                            "assets/images/taking_pic.png",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
+                          height: 60,
+                          width: 300,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              minimumSize: const Size(100, 40),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              _getFromCamera();
+                            },
+                            child: Text(
+                              'Camera'.tr,
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
-                          onPressed: () {
-                            _getFromCamera();
-                            // setState(() {
-                            //   if (imageFile != null) {
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => Identify_and_Detect(
-                            //             imageFile: imageFile!),
-                            //       ),
-                            //     );
-                            //     //Identify_and_Detect(imageFile: imageFile!);
-                            //   }
-                            // });
-                          },
-                          child: const Text(
-                            'Camera',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
                         ),
-                      ),
-                      Spacer(
-                        flex: 1,
-                      ),
-                      SizedBox(
-                        height: 60,
-                        width: 300,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        SizedBox(
+                          height: 60,
+                          width: 300,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              minimumSize: const Size.fromHeight(50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                            onPressed: () {
+                              _getFromGallery();
+                            },
+                            child: Text(
+                              'Gallery'.tr,
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
-                          onPressed: () {
-                            _getFromGallery();
-
-                            // setState(() {
-                            //   if (imageFile != null) {
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) => Identify_and_Detect(
-                            //             imageFile: imageFile!),
-                            //       ),
-                            //     );
-                            //     //Identify_and_Detect(imageFile: imageFile!);
-                            //   }
-                            // });
-                          },
-                          child: Text(
-                            'Gallery',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: SizedBox.shrink(),
-                      ),
-                    ],
+                        Expanded(
+                          child: SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              BottomNavBar(1),
+            ],
+          ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: SpinKitCircle(
+                  color: secondaryColor,
+                  size: 50.0,
+                ),
+              ),
             ),
-            BottomNavBar(1),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -187,36 +165,8 @@ class _TakePicState extends State<TakePic> {
     );
 
     if (pickedFile != null) {
-      //setState(() async {
-      //3-6-23
-      imageFile = await pickedFile.readAsBytes();
-
       File image = File(pickedFile.path);
-      Plant? resultPlant = await _processImage(image);
-
-      if (resultPlant != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Identify_and_Detect(
-              imageFile: imageFile!,
-              resultPlant: resultPlant,
-            ),
-          ),
-        );
-      } else {
-        // Handle case when plant identification failed
-        // ...
-      }
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => Identify_and_Detect(imageFile: imageFile!),
-      //   ),
-      // );
-      //Identify_and_Detect(imageFile: imageFile!);
-      // });
+      await _processPickedImage(image);
     }
   }
 
@@ -225,39 +175,73 @@ class _TakePicState extends State<TakePic> {
     setState(() {
       _isLoading = true;
     });
+
     var pickedFile = await imgP.pickImage(
       source: ImageSource.camera,
     );
 
     if (pickedFile != null) {
-      //setState(() {
-      imageFile = File(pickedFile.path).readAsBytesSync();
-
       File image = File(pickedFile.path);
-      Plant? resultPlant = await _processImage(image);
+      await _saveImageToGallery(image);
+      await _processPickedImage(image);
+    }
 
-      if (resultPlant != null) {
+    // Show a dialog to the user indicating that camera permissions are not granted
+    //_showPermissionDeniedDialog();
+  }
+
+  // Function to process the picked image and navigate to appropriate screens
+  Future<void> _processPickedImage(File image) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    imageFile = await image.readAsBytes();
+    Map<String, dynamic> processingResult = await _processImage(image);
+    Plant? resultPlant = processingResult['resultPlant'];
+    String diseaseStatus = processingResult['diseaseStatus'];
+
+    if (resultPlant?.commonName == 'No Plant detected') {
+      if (resultPlant?.description != '') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Identify_and_Detect(
+            builder: (context) => NoPlantFound(
               imageFile: imageFile!,
-              resultPlant: resultPlant,
+              errorMsg: resultPlant?.description,
             ),
           ),
         );
       } else {
-        // Handle case when plant identification failed
-        // ...
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NoPlantFound(
+              imageFile: imageFile!,
+            ),
+          ),
+        );
       }
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => Identify_and_Detect(imageFile: imageFile!),
-      //   ),
-      // );
-      // });
+    } else if (resultPlant != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Identify_and_Detect(
+            imageFile: imageFile!,
+            resultPlant: resultPlant,
+            diseaseStatus: diseaseStatus,
+          ),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NoPlantFound(
+            imageFile: imageFile!,
+          ),
+        ),
+      );
     }
 
     setState(() {
@@ -265,9 +249,22 @@ class _TakePicState extends State<TakePic> {
     });
   }
 
-  Future<Plant?> _processImage(File image) async {
-    Plant? resultPlant = await _captureImageController.processImage(image);
+  // Function to save the image to the gallery
+  Future<void> _saveImageToGallery(File image) async {
+    try {
+      await GallerySaver.saveImage(image.path);
+    } catch (e) {
+      print("Error saving image to gallery: $e");
+    }
+  }
 
-    return resultPlant;
+  Future<Map<String, dynamic>> _processImage(File image) async {
+    Plant? resultPlant = await _captureImageController.processImage(image);
+    String diseaseStatus = _captureImageController.getDiseaseStatus();
+
+    return {
+      'resultPlant': resultPlant,
+      'diseaseStatus': diseaseStatus,
+    };
   }
 }

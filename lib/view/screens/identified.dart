@@ -1,22 +1,25 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:GardenCare/view/screens/disease_detected.dart';
-import 'package:GardenCare/view/screens/no_disease.dart';
 import '../widgets/bottomNavBar.dart';
 import '../../utils/theme.dart';
 import '../widgets/crousel.dart';
 import '../../models/plant.dart';
-import '../../data/data.dart';
+import 'package:get/get.dart';
+import 'package:GardenCare/controllers/disease_controller.dart';
 
 class Identified extends StatelessWidget {
   final Uint8List? imageFile;
+  Plant resultPlant;
+  String diseaseStatus;
 
-  Identified({required this.imageFile});
+  Identified(
+      {required this.imageFile,
+      required this.resultPlant,
+      required this.diseaseStatus});
 
   @override
   Widget build(BuildContext context) {
-    Plant plant_detail = plantDataList[0];
+    //Plant plant_detail = plantDataList[0];
     return Scaffold(
       // appBar: AppBar(
       //   title: Text('Image Display'),
@@ -33,10 +36,10 @@ class Identified extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    SizedBox(height: 20),
+                    SizedBox(height: 50),
 
                     Text(
-                      'Plant Identified!',
+                      'Plant Identified!'.tr,
                       style: TextStyle(
                         fontSize: 20,
                         fontFamily: fontName,
@@ -49,7 +52,7 @@ class Identified extends StatelessWidget {
                     ),
 
                     Text(
-                      'Tomato',
+                      resultPlant.commonName.tr,
                       style: TextStyle(
                         fontSize: 30,
                         fontFamily: fontName,
@@ -83,11 +86,11 @@ class Identified extends StatelessWidget {
 
                     //Display Info
 
-                    Crousel(plant_detail, 500.0, 'identified'),
+                    Crousel(resultPlant, 500.0, 'identified'),
 
                     //Detect Plant Disease Button
                     SizedBox(
-                      height: 40,
+                      height: 20,
                     ),
 
                     SizedBox(
@@ -102,18 +105,42 @@ class Identified extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  // DiseaseDetected(imageFile: imageFile!),
-                                  NoDisease(imageFile: imageFile!),
-                            ),
-                          );
+                          DiseaseController.handleNavigation(
+                              context, imageFile!, resultPlant, diseaseStatus);
+                          // if (diseaseStatus != 'healthy') {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => DiseaseDetected(
+                          //         imageFile: imageFile!,
+                          //         plant: resultPlant,
+                          //         disease: diseaseStatus,
+                          //       ),
+                          //     ),
+                          //   );
+                          // } else {
+                          //   Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => NoDisease(
+                          //         imageFile: imageFile!,
+                          //       ),
+                          //     ),
+                          //   );
+                          // }
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) =>
+                          //         // DiseaseDetected(imageFile: imageFile!),
+                          //         // NoDisease(imageFile: imageFile!),
+                          //         NoPlantFound(imageFile: imageFile!),
+                          //   ),
+                          // );
                         },
                         //color: Colors.blue,
                         child: Text(
-                          'Detect Disease',
+                          'Detect Disease'.tr,
                           style: TextStyle(
                               fontSize: 15,
                               fontFamily: fontName,

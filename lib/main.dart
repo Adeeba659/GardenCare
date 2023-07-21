@@ -1,26 +1,17 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors
 
+import 'package:GardenCare/view/screens/language_selection.dart';
 import 'package:flutter/material.dart';
-import 'view/screens/home_page.dart';
 import 'utils/theme.dart';
 import 'package:flutter/services.dart';
-//import 'package:tflite/tflite.dart';
-//import 'dart:ui';
+import 'package:get/get.dart';
+import 'utils/app_translation.dart';
 
 void main() {
-  // Disable system overlays (status bar)
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-  // Hide system overlays (status bar)
-  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-  //SystemChrome.setEnabledSystemUIOverlays([]);
-  // Initialize Tflite
-  // WidgetsFlutterBinding.ensureInitialized();
-  // Tflite.loadModel(
-  //   model: 'assets/dl_model/model.tflite',
-  // ).then((value) {
-  //   runApp(MaterialApp(home: MyApp()));
-  // });
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom]);
   runApp(MaterialApp(home: MyApp()));
 }
 
@@ -30,20 +21,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final appColor = Color.fromRGBO(40, 6, 31, 1);
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          // colorScheme: ColorScheme.fromSwatch().copyWith(
-          //   // or from RGB
-
-          //   primary: const Color.fromRGBO(40, 6, 31, 1),
-          //   secondary: const Color(0xFFFFC107),
-          // ),
-
-          // primarySwatch: Colors.green,
-          //accentColor: Colors.white,
-          fontFamily: 'Poppins'),
+      translations: AppTranslation(),
+      locale: Locale('en', 'US'),
+      fallbackLocale: Locale('ur', 'PK'),
+      theme: ThemeData(fontFamily: 'Poppins'),
       home: Scaffold(
         body: Container(
           width: double.infinity,
@@ -117,31 +100,22 @@ class MyApp extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    //side: BorderSide(width: 3, color: Colors.white),
                   ),
-
-                  //color: Colors.blue,
                   child: Text(
                     'Get Started',
                     style: TextStyle(color: purpleColor),
                   ),
-
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => home_page()));
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LanguageSelection()));
                   },
                 ),
               ),
             ],
           ),
-
-          //child: const Text(
-          //'Image in fullscreen',
-          //style: TextStyle(fontSize: 34, color: Colors.red),
-          //),
         ),
-
-        //home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     );
   }

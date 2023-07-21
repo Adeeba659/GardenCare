@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:GardenCare/view/screens/history.dart';
+import 'package:get/get.dart';
 import 'take_pic.dart';
 import 'encyclo.dart';
 import '../../utils/theme.dart';
@@ -9,6 +9,8 @@ import '../widgets/bottomNavBar.dart';
 
 // ignore: camel_case_types
 class home_page extends StatelessWidget {
+  //List<bool> _selections = List.generate(2, (_) => false);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +48,7 @@ class home_page extends StatelessWidget {
                     width: 20,
                   ),
                   Text(
-                    'Welcome',
+                    'Welcome'.tr,
                     style: TextStyle(
                       fontSize: 36,
                       color: primaryColor,
@@ -95,7 +97,7 @@ class home_page extends StatelessWidget {
                 ),
 
                 label: Text(
-                  'Take Picture',
+                  'Take Picture'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
@@ -131,7 +133,7 @@ class home_page extends StatelessWidget {
                   size: 40,
                 ),
                 label: Text(
-                  'Plant Encyclopedia',
+                  'Plant Encyclopedia'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
@@ -170,8 +172,8 @@ class home_page extends StatelessWidget {
                   AssetImage("assets/images/historyIcon.png"),
                   size: 50,
                 ),
-                label: const Text(
-                  'History',
+                label: Text(
+                  'History'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
@@ -183,6 +185,24 @@ class home_page extends StatelessWidget {
             Spacer(
               flex: 1, // <-- SEE HERE
             ),
+            // Container(
+            //   child: ToggleButtons(
+            //       isSelected: _selections,
+            //       color: primaryColor,
+            //       onPressed: (int index) {},
+            //       children: [
+            //         TextButton(
+            //             onPressed: () {
+            //               myController.changeLanguage('en', 'US');
+            //             },
+            //             child: Text('English')),
+            //         TextButton(
+            //             onPressed: () {
+            //               myController.changeLanguage('ur', 'PK');
+            //             },
+            //             child: Text('Urdu'))
+            //       ]),
+            // ),
             // const Expanded(
             //   // <-- SEE HERE
             //   child: SizedBox.shrink(),

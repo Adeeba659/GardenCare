@@ -3,10 +3,9 @@ import 'plant_datail.dart';
 import '../../utils/theme.dart';
 import '../widgets/bottomNavBar.dart';
 import '../../models/plant.dart';
-import '../../data/data.dart';
-import 'package:flutter/material.dart';
 import '../../data/saved_plants.dart';
 import '../../models/saved_plant_model.dart';
+import 'package:get/get.dart';
 
 class history extends StatefulWidget {
   const history({Key? key}) : super(key: key);
@@ -32,6 +31,15 @@ class _HistoryState extends State<history> {
     });
   }
 
+  Future<void> deletePlant(int index) async {
+    if (index >= 0 && index < plantList.length) {
+      await savedPlants.delete(index);
+      setState(() {
+        plantList = savedPlants.getPlantList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -54,7 +62,7 @@ class _HistoryState extends State<history> {
                       height: 60,
                     ),
                     Text(
-                      'History of Plants',
+                      'History of Plants'.tr,
                       style: TextStyle(
                         fontSize: 30,
                         color: primaryColor,
@@ -72,7 +80,7 @@ class _HistoryState extends State<history> {
                     ),
                     plantList.isEmpty
                         ? Text(
-                            'No saved plants',
+                            'No saved plants'.tr,
                             style: TextStyle(
                               fontSize: 18,
                               color: primaryColor,
@@ -85,28 +93,52 @@ class _HistoryState extends State<history> {
                                 itemBuilder: (ctx, index) {
                                   SavedPlantModel savedPlant = plantList[index];
 
-                                  return InkWell(
-                                    onTap: () {
-                                      Plant clickedPlant =
-                                          savedPlant.plant_detail;
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              plantDetail(clickedPlant),
-                                        ),
-                                      );
+                                  return Dismissible(
+                                    key: Key(savedPlant.imagePath),
+                                    direction: DismissDirection.endToStart,
+                                    onDismissed: (direction) {
+                                      deletePlant(index);
                                     },
-                                    child: Center(
-                                      child: Card(
-                                        elevation: 0,
-                                        margin: EdgeInsets.all(20),
-                                        child: Text(
-                                          savedPlant.plant_detail.commonName,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            color: primaryColor,
-                                            fontFamily: fontName,
+                                    background: Container(
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      color: Colors.red,
+                                      child: Icon(Icons.delete,
+                                          color: Colors.white),
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Plant clickedPlant =
+                                            savedPlant.plant_detail;
+                                        String imgPath = savedPlant.imagePath;
+                                        if (imgPath == null) {
+                                          imgPath == '';
+                                        }
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => plantDetail(
+                                                clickedPlant,
+                                                imagePath: imgPath,
+                                                isHistory: true,
+                                                diseaseStatus:
+                                                    savedPlant.diseaseIndex),
+                                          ),
+                                        );
+                                      },
+                                      child: Center(
+                                        child: Card(
+                                          elevation: 0,
+                                          margin: EdgeInsets.all(20),
+                                          child: Text(
+                                            savedPlant
+                                                .plant_detail.commonName.tr,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: primaryColor,
+                                              fontFamily: fontName,
+                                            ),
                                           ),
                                         ),
                                       ),

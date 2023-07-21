@@ -1,18 +1,21 @@
 import 'dart:typed_data';
-
+import 'package:GardenCare/controllers/disease_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:GardenCare/view/screens/disease_detected.dart';
 import '../widgets/bottomNavBar.dart';
 import '../../utils/theme.dart';
 import '../screens/identified.dart';
 import '../../models/plant.dart';
-import 'no_plant_found.dart';
+import 'package:get/get.dart';
 
 class Identify_and_Detect extends StatelessWidget {
   final Uint8List? imageFile;
   final Plant resultPlant;
+  final String diseaseStatus;
 
-  Identify_and_Detect({required this.imageFile, required this.resultPlant});
+  Identify_and_Detect(
+      {required this.imageFile,
+      required this.resultPlant,
+      required this.diseaseStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,7 @@ class Identify_and_Detect extends StatelessWidget {
                           width: 20,
                         ),
                         Text(
-                          'Choose an option',
+                          'Choose an option'.tr,
                           style: TextStyle(
                             fontSize: 30,
                             fontFamily: fontName,
@@ -57,11 +60,6 @@ class Identify_and_Detect extends StatelessWidget {
                       ],
                     ),
                     Container(
-                      // decoration: BoxDecoration(
-                      //     border: Border.all(
-                      //       color: primaryColor,
-                      //     ),
-                      //     borderRadius: BorderRadius.all(Radius.circular(20))),
                       margin: EdgeInsets.all(20),
                       padding: EdgeInsets.all(10),
                       height: 400,
@@ -91,14 +89,17 @@ class Identify_and_Detect extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  Identified(imageFile: imageFile!),
+                              builder: (context) => Identified(
+                                imageFile: imageFile!,
+                                resultPlant: resultPlant,
+                                diseaseStatus: diseaseStatus,
+                              ),
                             ),
                           );
                         },
                         //color: Colors.blue,
                         child: Text(
-                          'Identify Plant',
+                          'Identify Plant'.tr,
                           style: TextStyle(
                               fontSize: 18,
                               fontFamily: fontName,
@@ -125,17 +126,12 @@ class Identify_and_Detect extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  DiseaseDetected(imageFile: imageFile!),
-                            ),
-                          );
+                          DiseaseController.handleNavigation(
+                              context, imageFile!, resultPlant, diseaseStatus);
                         },
                         //color: Colors.blue,
                         child: Text(
-                          'Detect Disease',
+                          'Detect Disease'.tr,
                           style: TextStyle(
                               fontSize: 18,
                               fontFamily: fontName,
@@ -146,10 +142,6 @@ class Identify_and_Detect extends StatelessWidget {
                   ],
                 ),
               ),
-              // child: Image.memory(
-              //   imageFile,
-              //   fit: BoxFit.cover,
-              // ),
             ),
           ),
           BottomNavBar(0),

@@ -1,67 +1,131 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-//import 'package:tflite/tflite.dart';
 import '../models/plant.dart';
 import '../controllers/plant_controller.dart';
+import 'history_controller.dart';
+import 'package:get/get.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class IdentificationController {
-  Future<Plant?> identifyPlant(File image) async {
-    // Load the TFLite model
-    // String modelPath =
-    //     'assets/dl_model/model.tflite'; // Replace with your model file path
-    // await Tflite.loadModel(
-    //   model: modelPath,
-    // );
+  String diseaseStatus = '';
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  Future<Plant?> identifyPlant(File file) async {
+    file;
+    Plant? identifiedPlant;
+    //print(file);
 
-    // // Run the TFLite model on the provided image
-    // var recognitions = await Tflite.runModelOnImage(
-    //   path: image.path,
-    //   numResults: 1, // Only retrieve the top result
-    // );
+    // Replace the apiUrl with your Heroku API endpoint
+    final apiUrl = 'https://gardencare-d7f06d060548.herokuapp.com/gardencare';
+    //print(apiUrl);
 
-    // // Parse the recognition result
-    // String plantName = recognitions != null && recognitions.isNotEmpty
-    //     ? recognitions[0]['label']
-    //     : '';
+    // Read the image data from the file as bytes
+    List<int> imageBytes = await file.readAsBytes();
+    //print(imageBytes);
 
-    // // Get the plant details from your data source or API based on the plant name
-    // //Plant identifiedPlant = getPlantDetails(plantName);
-    // // Get the list of plants
-    // List<Plant> plants = await PlantController.fetchPlants();
+    // Create a new multipart request
+    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+    //print(request);
 
-    // // Find the matching plant based on commonName
-    // Plant? identifiedPlant = plants.firstWhere(
-    //   (plant) => plant.commonName == plantName,
-    //   //orElse: () => null,
-    // );
+    // Add the image file to the request as a part named 'image'
+    var imagePart = http.MultipartFile.fromBytes(
+      'file', // The name of the field in the API to receive the image
+      imageBytes, // The image data as bytes
+      filename:
+          'image.jpg', // The filename to send to the API (can be anything)
+    );
 
-    // // Release the TFLite resources
-    // Tflite.close();
+    request.files.add(imagePart);
 
-    Plant identifiedPlant = Plant(
-        commonName: 'Tomato',
-        description: 'hi',
-        diseases: ['Late Blight'],
-        scientificName: 'df',
-        diseases_desc: ['fdv'],
-        treatements: ['dg'],
-        plantImage: 'znjd',
-        diseaseImage: ['jdf']);
+    try {
+      // Send the multipart request and wait for the response
+      var response = await http.Response.fromStream(await request.send());
+      print(response);
 
-    return identifiedPlant;
+      if (response.statusCode == 200) {
+        // Handle the successful response
+        print('Image sent successfully.');
+        print(response.body); // You can process the API response here if needed
+
+        String jsonData = response.body;
+        Map<String, dynamic> dataMap = jsonDecode(jsonData);
+
+        String plantName = dataMap['data']['disease_name'];
+        //String message = dataMap['message'];
+
+        //print(plantName);
+        //print(message);
+
+        List<String> plantSplit = plantName.split('___');
+        String plantCName = plantSplit[0];
+        diseaseStatus = plantSplit[1].replaceAll('_', ' ');
+
+        // Get the list of plants
+        List<Plant> plants = await PlantController.fetchPlants();
+
+        //print('CName : ' + plantCName);
+        //print('Disease Status: ' + diseaseStatus);
+
+        // Find the matching plant based on commonName
+        identifiedPlant = plants.firstWhere(
+          (plant) => plant.commonName == plantCName.tr,
+
+          orElse: () => Plant(
+              commonName: 'No Plant detected',
+              description: '',
+              diseases: [''],
+              scientificName: '',
+              diseases_desc: [''],
+              treatements: [''],
+              plantImage: '',
+              diseaseImage: ['']), // Return null if no element is found
+        );
+
+        print('Identified Plant: ' + identifiedPlant.commonName);
+
+        HistoryController.addHistory(file, identifiedPlant, getDiseaseStatus());
+
+        return identifiedPlant;
+      } else {
+        // Handle the API error
+        print('Failed to send image. Status code: ${response.statusCode}');
+        String errorMsg =
+            'Failed to send image. Status code: ${response.statusCode}';
+        print(response
+            .body); // You can check the error response from the API here
+
+        identifiedPlant = Plant(
+            commonName: 'No Plant detected',
+            description: errorMsg,
+            diseases: [''],
+            scientificName: '',
+            diseases_desc: [''],
+            treatements: [''],
+            plantImage: '',
+            diseaseImage: ['']);
+
+        return identifiedPlant;
+      }
+    } catch (e) {
+      // Handle any network or other errors that occurred during the request
+      print('Error sending image: $e');
+      String errorMsg = 'Network Error : Connect to Internet';
+
+      identifiedPlant = Plant(
+          commonName: 'No Plant detected',
+          description: errorMsg,
+          diseases: [''],
+          scientificName: '',
+          diseases_desc: [''],
+          treatements: [''],
+          plantImage: '',
+          diseaseImage: ['']);
+
+      return identifiedPlant;
+    }
   }
 
-  // Plant getPlantDetails(String plantName) {
-  //   // Fetch the plant details from your data source or API based on the plant name
-  //   // Replace this with your actual implementation
-  //   // You can retrieve additional information like disease from your data source
-  //   String commonName = plantName;
-  //   //String disease = 'Powdery Mildew';
-
-  //   // Create and return the Plant object with the identified details
-  //   return Plant(
-  //     commonName: commonName,
-  //     disease: disease,
-  //   );
-  // }
+  String getDiseaseStatus() {
+    return diseaseStatus;
+  }
 }

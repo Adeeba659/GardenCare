@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/plant.dart';
 import '../models/saved_plant_model.dart';
 
@@ -19,11 +18,13 @@ class SavedPlants {
     await savePlantList();
   }
 
-  void delete(int index) {
+  Future<void> delete(int index) {
     if (index >= 0 && index < plantList.length) {
       plantList.removeAt(index);
       savePlantList();
     }
+    // Return a completed Future
+    return Future.value();
   }
 
   List<SavedPlantModel> getPlantList() {

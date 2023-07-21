@@ -9,20 +9,22 @@ class DiseaseController {
   static void handleNavigation(
     BuildContext context,
     Uint8List imageFile,
-    Plant? plantDetail,
-    String? disease,
+    Plant? plant,
+    String diseaseStatus,
   ) {
-    if (disease == null) {
+    if (diseaseStatus == 'healthy') {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => NoDisease(
             imageFile: imageFile,
+            plantName: plant!.commonName,
+
             // plantDetail: plantDetail,
           ),
         ),
       );
-    } else if (plantDetail == null) {
+    } else if (plant == null) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -37,6 +39,9 @@ class DiseaseController {
         MaterialPageRoute(
           builder: (context) => DiseaseDetected(
             imageFile: imageFile,
+            plant: plant,
+            disease: diseaseStatus,
+
             //plantDetail: plantDetail,
             //disease: disease,
           ),

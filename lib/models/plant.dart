@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-
 class Plant {
   final String commonName;
   final String scientificName;

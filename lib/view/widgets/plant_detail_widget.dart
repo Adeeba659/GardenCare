@@ -1,11 +1,9 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
 import '../../utils/theme.dart';
-import '../../data/data.dart';
 import '../../models/plant.dart';
 import '../widgets/information.dart';
-import 'bottomNavBar.dart';
+import 'package:get/get.dart';
 
 class PlantDetailWidget {
   final Plant plant_detail;
@@ -17,12 +15,6 @@ class PlantDetailWidget {
   late List Diseases = diseases();
 
   List<Widget> widget_list = [];
-  // late List<Widget> widget_list = [
-  //   scientificName,
-  //   plantDescription,
-  //   diseaseHeading,
-  //   Diseases,
-  // ];
 
   void initializeWidgetList() {
     widget_list = [
@@ -35,7 +27,7 @@ class PlantDetailWidget {
 
   plant_name() {
     return Text(
-      plant_detail.commonName,
+      plant_detail.commonName.tr,
       style: TextStyle(
           fontSize: 20,
           color: primaryColor,
@@ -47,7 +39,7 @@ class PlantDetailWidget {
   scientific_name() {
     return Column(
       children: [
-        Information('Scientific Name', plant_detail.scientificName),
+        Information('Scientific Name'.tr, plant_detail.scientificName.tr),
         SizedBox(height: 50),
         Image(
           image: AssetImage(plant_detail.plantImage),
@@ -55,31 +47,11 @@ class PlantDetailWidget {
         ),
       ],
     );
-
-    // Column(
-    //   //mainAxisAlignment: MainAxisAlignment.start,
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   //crossAxisAlignment: CrossAxisAlignment.center,
-    //   children: [
-    //     Text(
-    //       'Scientific Name  ',
-    //       style: TextStyle(
-    //           fontSize: 16, color: primaryColor, fontWeight: FontWeight.bold),
-    //     ),
-    //     Text(
-    //       plant_detail.scientificName,
-    //       style: TextStyle(
-    //         fontSize: 14,
-    //         color: primaryColor,
-    //       ),
-    //     ),
-    //   ],
-    // );
   }
 
   plant_description() {
     //Description
-    return Information('Description ', plant_detail.description);
+    return Information('Description'.tr, plant_detail.description.tr);
   }
 
   diseases_heading() {
@@ -87,7 +59,7 @@ class PlantDetailWidget {
 
     return Column(
       children: [
-        Center(child: Information('\nDiseases ', '')),
+        Center(child: Information('Diseases'.tr, '')),
         SizedBox(height: 30),
         Image(
           image: AssetImage('assets/images/plants/disease.png'),
@@ -104,7 +76,7 @@ class PlantDetailWidget {
       diseaseWidgets.add(
         Column(
           children: [
-            Information(plant_detail.diseases[index], ''),
+            Information(plant_detail.diseases[index].tr, ''),
             SizedBox(height: 30),
             Image(
               image: AssetImage(plant_detail.diseaseImage[index]),
@@ -116,11 +88,11 @@ class PlantDetailWidget {
 
       diseaseWidgets.add(
         Information(
-            'Diseases Description  ', plant_detail.diseases_desc[index]),
+            'Disease Description'.tr, plant_detail.diseases_desc[index].tr),
       );
 
       diseaseWidgets.add(
-        Information('Treatments  ', plant_detail.treatements[index]),
+        Information('Treatments'.tr, plant_detail.treatements[index].tr),
       );
     }
 
