@@ -11,7 +11,7 @@ Identifies plants by capturing images or selecting from the gallery. GardenCare'
 Detect diseases in plant leaves accurately. The ResNet-50 model can diagnose common diseases, including Grape Black Rot, Peach Bacterial Spot, Rose Black Spot, and Tomato Late Blight.
 
 ### Plant Encyclopedia: 
-Access an extensive plant encyclopedia with details about different plants, including their characteristics and maintenance tips.
+Access plant encyclopedia with details about different plants, including their characteristics and maintenance tips.
 
 ### History: 
 View a history of previously identified plants and disease detection results, including the images taken during identification.
