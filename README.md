@@ -13,7 +13,7 @@ Detect diseases in plant leaves accurately. The ResNet-50 model can diagnose com
 ### Plant Encyclopedia: 
 Access an extensive plant encyclopedia with details about different plants, including their characteristics and maintenance tips.
 
-### Detection History: 
+### History: 
 View a history of previously identified plants and disease detection results, including the images taken during identification.
 
 ## Hosted ResNet-50 Model:
