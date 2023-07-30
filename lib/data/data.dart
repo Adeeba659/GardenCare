@@ -102,7 +102,6 @@ List<Plant> plantDataList = [
   ),
 
   //Aloe Vera
-
   // Plant(
   //     commonName: 'Aloa Vera',
   //     scientificName: 'Prunus persica',

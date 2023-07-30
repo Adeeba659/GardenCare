@@ -40,12 +40,12 @@ class IdentificationController {
     try {
       // Send the multipart request and wait for the response
       var response = await http.Response.fromStream(await request.send());
-      print(response);
+      //print(response);
 
       if (response.statusCode == 200) {
         // Handle the successful response
-        print('Image sent successfully.');
-        print(response.body); // You can process the API response here if needed
+        //('Image sent successfully.');
+        //print(response.body); // You can process the API response here if needed
 
         String jsonData = response.body;
         Map<String, dynamic> dataMap = jsonDecode(jsonData);
@@ -56,21 +56,24 @@ class IdentificationController {
         //print(plantName);
         //print(message);
 
+        double confidence = dataMap['data']['confidence'];
+        //print(confidence);
+
         List<String> plantSplit = plantName.split('___');
         String plantCName = plantSplit[0];
         diseaseStatus = plantSplit[1].replaceAll('_', ' ');
+
+        plantCName = 'Aloa Vera';
 
         // Get the list of plants
         List<Plant> plants = await PlantController.fetchPlants();
 
         //print('CName : ' + plantCName);
         //print('Disease Status: ' + diseaseStatus);
+        print(confidence);
 
-        // Find the matching plant based on commonName
-        identifiedPlant = plants.firstWhere(
-          (plant) => plant.commonName == plantCName.tr,
-
-          orElse: () => Plant(
+        if (confidence < 95) {
+          identifiedPlant = Plant(
               commonName: 'No Plant detected',
               description: '',
               diseases: [''],
@@ -78,21 +81,36 @@ class IdentificationController {
               diseases_desc: [''],
               treatements: [''],
               plantImage: '',
-              diseaseImage: ['']), // Return null if no element is found
-        );
+              diseaseImage: ['']);
+        } else {
+          // Find the matching plant based on commonName
+          identifiedPlant = plants.firstWhere(
+            (plant) => plant.commonName == plantCName.tr,
 
-        print('Identified Plant: ' + identifiedPlant.commonName);
+            orElse: () => Plant(
+                commonName: 'No Plant detected',
+                description: '',
+                diseases: [''],
+                scientificName: '',
+                diseases_desc: [''],
+                treatements: [''],
+                plantImage: '',
+                diseaseImage: ['']), // Return null if no element is found
+          );
+        }
 
-        HistoryController.addHistory(file, identifiedPlant, getDiseaseStatus());
+        //print('Identified Plant: ' + identifiedPlant.commonName);
+        if (identifiedPlant.commonName != 'No Plant detected') {
+          HistoryController.addHistory(
+              file, identifiedPlant, getDiseaseStatus());
+        }
 
         return identifiedPlant;
       } else {
         // Handle the API error
-        print('Failed to send image. Status code: ${response.statusCode}');
-        String errorMsg =
-            'Failed to send image. Status code: ${response.statusCode}';
-        print(response
-            .body); // You can check the error response from the API here
+        //print('Failed to send image. Status code: ${response.statusCode}');
+        String errorMsg = 'Failed to send image.';
+        //print(response.body); // You can check the error response from the API here
 
         identifiedPlant = Plant(
             commonName: 'No Plant detected',
@@ -107,19 +125,35 @@ class IdentificationController {
         return identifiedPlant;
       }
     } catch (e) {
-      // Handle any network or other errors that occurred during the request
-      print('Error sending image: $e');
-      String errorMsg = 'Network Error : Connect to Internet';
+      if (e is SocketException) {
+        // Handle network-related errors here
+        //print('Network Error: Connect to the Internet');
+        String errorMsg = 'Network Error: Connect to the Internet';
 
-      identifiedPlant = Plant(
-          commonName: 'No Plant detected',
-          description: errorMsg,
-          diseases: [''],
-          scientificName: '',
-          diseases_desc: [''],
-          treatements: [''],
-          plantImage: '',
-          diseaseImage: ['']);
+        identifiedPlant = Plant(
+            commonName: 'No Plant detected',
+            description: errorMsg,
+            diseases: [''],
+            scientificName: '',
+            diseases_desc: [''],
+            treatements: [''],
+            plantImage: '',
+            diseaseImage: ['']);
+      } else {
+        // Handle other types of errors here
+        //print('Error sending image: $e');
+        String errorMsg = 'An error occurred while sending the image';
+
+        identifiedPlant = Plant(
+            commonName: 'No Plant detected',
+            description: errorMsg,
+            diseases: [''],
+            scientificName: '',
+            diseases_desc: [''],
+            treatements: [''],
+            plantImage: '',
+            diseaseImage: ['']);
+      }
 
       return identifiedPlant;
     }

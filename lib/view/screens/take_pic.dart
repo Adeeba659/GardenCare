@@ -182,8 +182,7 @@ class _TakePicState extends State<TakePic> {
 
     if (pickedFile != null) {
       File image = File(pickedFile.path);
-      await _saveImageToGallery(image);
-      await _processPickedImage(image);
+      await _processPickedImage(image, isFromCamera: true);
     }
 
     // Show a dialog to the user indicating that camera permissions are not granted
@@ -191,7 +190,8 @@ class _TakePicState extends State<TakePic> {
   }
 
   // Function to process the picked image and navigate to appropriate screens
-  Future<void> _processPickedImage(File image) async {
+  Future<void> _processPickedImage(File image,
+      {bool isFromCamera = false}) async {
     setState(() {
       _isLoading = true;
     });
@@ -201,7 +201,7 @@ class _TakePicState extends State<TakePic> {
     Plant? resultPlant = processingResult['resultPlant'];
     String diseaseStatus = processingResult['diseaseStatus'];
 
-    if (resultPlant?.commonName == 'No Plant detected') {
+    if (resultPlant?.commonName == 'No Plant detected' || resultPlant == null) {
       if (resultPlant?.description != '') {
         Navigator.pushReplacement(
           context,
@@ -222,7 +222,7 @@ class _TakePicState extends State<TakePic> {
           ),
         );
       }
-    } else if (resultPlant != null) {
+    } else {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -233,15 +233,10 @@ class _TakePicState extends State<TakePic> {
           ),
         ),
       );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NoPlantFound(
-            imageFile: imageFile!,
-          ),
-        ),
-      );
+      // Save the image to the gallery only when a plant is found and picked from the camera
+      if (isFromCamera && resultPlant?.commonName != 'No Plant detected') {
+        await _saveImageToGallery(image);
+      }
     }
 
     setState(() {
