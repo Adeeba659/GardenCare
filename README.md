@@ -4,16 +4,16 @@ GardenCare is a user-friendly Flutter mobile app that simplifies plant identific
 
 ## Key Features:
 
-# Plant Identification: 
+### Plant Identification: 
 Effortlessly identify plants by capturing images or selecting from the gallery. GardenCare's ResNet-50 model quickly analyzes the pictures to recognize the plant species.
 
-# Disease Detection: 
+### Disease Detection: 
 Detect diseases in plant leaves accurately. The ResNet-50 model can diagnose common diseases, including Grape Black Rot, Peach Bacterial Spot, Rose Black Spot, and Tomato Late Blight.
 
-# Plant Encyclopedia: 
+### Plant Encyclopedia: 
 Access an extensive plant encyclopedia with details about different plants, including their characteristics and maintenance tips.
 
-# Detection History: 
+### Detection History: 
 View a history of previously identified plants and disease detection results, including the images taken during identification.
 
 ## Hosted ResNet-50 Model:
